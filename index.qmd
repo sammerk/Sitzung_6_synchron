@@ -1,0 +1,220 @@
+---
+title: "Vorlesung: Forschungsmethoden"
+subtitle: "Sitzung 6: Bivariate Zusammenhänge"
+author: "Andre Epp & Samuel Merk"
+date: "`r Sys.Date()`"
+format: 
+  revealjs:
+    title-slide-attributes:
+      data-background-image: img/sash.svg
+      data-background-size: 30%
+      data-background-position: 0 0
+    slide-number: true
+    controls: true
+    logo: https://drive.google.com/uc?export=view&id=1Eoy1slqV_DDgG50f3V6tc6QvFnhCBE1H
+    theme: [dark, css/custom.scss]
+    chalkboard:
+      theme: whiteboard
+      boardmarker-width: 3
+      buttons: true
+      chalk-effect: 0
+    fullscreen: true
+    pdfexport: true
+editor_options: 
+  chunk_output_type: console
+---
+
+
+
+## Was habe ich heute vor?
+<head>
+<script src="https://kit.fontawesome.com/994a28441d.js" crossorigin="anonymous"></script>
+</head>
+
+* Überblick (Mindmap)
+* Wdh. anhand der Daten aus der Eingangserhebung
+* Wdh. am Beispiel: »Wie (un-)fair sind Noten?«
+* Ihre Fragen <i class="far fa-question-circle"></i>
+* Weitere Aufgaben
+
+```{r hidden chunk which creates template stuff}
+#| echo: false
+
+library(fontawesome)
+library(tidyverse)
+# Change css to lecker PH green
+if(!dir.exists("css"))
+dir.create("css")
+fileConn<-file("css/custom.scss")
+writeLines(c("/*-- scss:defaults --*/",
+             "$link-color: #8cd000 !default;"), fileConn)
+close(fileConn)
+
+# create sash with URL
+sash <- 
+  ggplot() + 
+  geom_polygon(data = tibble(x = c(0,4,5.5,0),
+                             y = c(1,5,5,-.5)),
+               aes(x,y), fill = "#8cd000") + 
+  coord_fixed() +
+  annotate(geom = "text", 
+           label = "www.ph-ka.de", 
+           x = .8, y = .8, 
+           angle = 45,
+           hjust = 0, vjust = 0,
+           size = 10,
+           color = "white",
+           family="Courier") +
+ theme_void() + 
+ theme(plot.margin = margin(-2,0,0,-12, unit = "cm"))
+ggsave("img/sash.svg", sash)
+```
+
+```{css}
+.imp {
+  color: #8cd000;
+}
+
+div.callout-note {
+    border-left-color: #8cd000 !important;
+}
+
+div.callout-note.callout-style-default .callout-caption {
+    background-color: #acff00b0;
+}
+```
+
+
+## Den <i class="fas fa-tree"></i><i class="fas fa-tree"></i><i class="fas fa-tree"></i> trotz lauter <i class="fas fa-tree"></i> sehen
+<iframe style="width:1800px;height:550px;border: 1px
+solid black" src="https://app.wisemapping.com/c/maps/1210585/embed?zoom=1"> </iframe>
+
+## {background-iframe="https://innovationspace.ph-karlsruhe.de/course/view.php?id=86" background-interactive="true"}
+
+## Wdh. - Eingangsbefragung
+### Sind Gewissenhaftigkeit und Noten assoziiert?
+Die Daten wurden wie folgt erhoben:
+```{r}
+#| echo: false
+source("https://soscisurvey.ph-karlsruhe.de/FOME_WS22/?act=G3GRBiZ9ORqBd2vJpEPHqd60&rScript")
+data <- 
+    ds %>% 
+    select(BF_Gew1, BF_Gew2, BF_Gew3, AS02_01) %>% 
+    na.omit() %>% 
+    rowwise() %>% 
+    mutate(Gew = mean(c(BF_Gew1, BF_Gew2, BF_Gew3), na.rm = T)) %>%
+    ungroup() %>% 
+    relocate(BF_Gew1, BF_Gew2, BF_Gew3, Gew, AS02_01) %>% 
+    mutate(NC = as.numeric(AS02_01))
+
+data %>% 
+    sample_n(3) %>% 
+    knitr::kable()
+```
+
+## Wdh. - Eingangsbefragung {.center .smaller}
+### Sind Gewissenhaftigkeit und Noten assoziiert?
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+```{r}
+#| echo: false
+#| fig-width: 5
+library(hrbrthemes)
+ggplot(data, aes(Gew, NC)) + 
+    geom_jitter() + 
+    stat_smooth(method = "lm") +
+    theme_modern_rc() +
+    ggtitle("Assoziation", "von NC und Gewissenhaftigkeit") +
+    coord_cartesian(ylim = c(1,4))
+#cor.test(data$Gew, data$NC)
+#cor.test(data$Gew, data$NC, method = "kendal")
+#BayesFactor::correlationBF(data$Gew, data$NC)
+```
+
+:::
+
+::: {.column width="50%"}
+Für die Nullhypothese $H_0: r = 0$ ergibt sich ein $\text{p-Wert} < .001$ und ein $BF_{10} = 92$ bei einem $r = .19$.
+
+> Wie kann man diese Werte interpretieren?
+:::
+
+::::
+
+
+## Wdh. Kendal's $\tau$ am Beispiel Notenfairness {.smaller}
+
+Stellen Sie sich vor, sie haben die Noten sowie die objektiviert gemessenen Kompetenzstufen aller $N=12350$ Achtklässlerinnen und Achtklässern eines Bundeslandes in einem Datensatz. 
+
+## Bubbleplot
+```{r}
+#| label: data
+#| echo: false
+library(tidyverse)
+data <- tibble(Note = c(rep(1 ,4), rep(1, 28), rep(1, 62), rep(1, 204),
+                  rep(2, 62), rep(2, 335), rep(2, 576), rep(2, 812), rep(2, 810),
+                  rep(3,469), rep(3,1282), rep(3,1398), rep(3,1074), rep(3,430),
+                  rep(4,844), rep(4,1341), rep(4,904), rep(4,412), rep(4,91),
+                  rep(5,501), rep(5,390), rep(5,142), rep(5,40), rep(5,5),
+                  rep(6,83), rep(6,37), rep(6,7), rep(6,5), rep(6,2)
+                  ),
+         Kompetenzstufe = c(rep(2, 4), rep(3, 28), rep(4, 62), rep(5,204),
+                            rep(1, 62), rep(2, 335), rep(3, 576), rep(4, 812), rep(5, 810),
+                            rep(1,469), rep(2,1282), rep(3,1398), rep(4,1074), rep(5,430),
+                            rep(1,844), rep(2,1341), rep(3,904), rep(4,412), rep(5,91),
+                            rep(1,501), rep(2,390), rep(3,142), rep(4,40), rep(5,5),
+                            rep(1,83), rep(2,37), rep(3,7), rep(4,5), rep(5,2)
+                  ))
+haven::write_sav(data %>% 
+                   mutate(Note = as.ordered(Note),
+                          Kompetenzstufe = as.ordered(Kompetenzstufe)),
+                 "data_Noten_Kompetenzstufen.sav")
+head(data)
+```
+
+
+
+> Was denken Sie: Wie sieht ein »Bubble Plot« aus, der die Assoziation dieser beiden Variablen beschreibt? 
+
+## Bubble Plot
+```{r}
+#| echo: false
+library(tidyverse)
+data %>% group_by(Note, Kompetenzstufe) %>% mutate(count = n()) -> data
+
+data %>% ggplot(aes(x = factor(Kompetenzstufe), y = factor(Note), size = count)) +
+  ylab("Halbjahresnote (1.HJ, Kl. 8)") +
+  xlab("Kompetenzstufe (Vera-8)") +
+  ggtitle("Fairness", "von Noten") +
+  theme_modern_rc()
+
+```
+
+
+## Bubble Plot
+```{r}
+#| echo: false
+library(tidyverse)
+data %>% ggplot(aes(x = factor(Kompetenzstufe), y = factor(Note), size = count)) +
+  geom_point() +
+  geom_text(aes(label=count), size = 3, color = "white") +
+  scale_size(range = c(3, 25)) +
+  scale_y_discrete() +
+  guides(size = "none") +
+  ylab("Halbjahresnote (1.HJ, Kl. 8)") +
+  xlab("Kompetenzstufe (Vera-8)") +
+  theme_modern_rc() +
+  ggtitle("Fairness", "von Noten") 
+
+```
+
+## Ihre Fragen <i class="far fa-question-circle"></i> {.smaller}
+
+Stellen Sie Ihre Fragen zu Video/Aufgaben unter http://bit.ly/merk006 und voten Sie die Fragen Ihrer Kommiliton*innen.
+
+
+## Aufgaben
+Beantworten Sie die drei Fragen unter http://bit.ly/merk006.

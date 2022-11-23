@@ -1,0 +1,340 @@
+---
+title: "Vorlesung: Forschungsmethoden"
+subtitle: "Sitzung 12: Bivariate Zusammenhänge"
+author: "Andre Epp & Samuel Merk"
+date: "2019/01/15 (updated: `r Sys.Date()`)"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: xaringan-themer.css
+    seal: false
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: "16:9"
+      navigation:
+        scroll: false
+        click: false
+        touch: true
+editor_options: 
+  chunk_output_type: console
+---
+class: center,  middle, hide_logo
+
+
+<head>
+<script src="https://kit.fontawesome.com/994a28441d.js" crossorigin="anonymous"></script>
+<script src="//cdn.wordart.com/wordart.min.js" async defer></script>
+</head>
+
+<!--<div class="my-footer"><span>Folien CC-BY verfügbar unter https://atelier-phka-merk-2020.netlify.app</span></div> 
+
+
+<style>
+.remark-slide-number {
+  font-size: 10pt;
+  margin-bottom: -11.6px;
+  margin-right: 10px;
+  color: red; /* white */
+  opacity: 0; /* default: 0.5 */
+}
+</style>
+--> 
+
+```{r xaringan-themer, echo=F, warning=FALSE}
+library(xaringanthemer)
+library(fontawesome)
+library(xaringanExtra)
+
+extra_css <- list(
+  ".cit"  = list("font-size" = "70%",
+                 "color" = "#6AEE3E90"),
+  ".em05" = list("font-size" ="0.5em"),
+  ".em06" = list("font-size" ="0.6em"),
+  ".em07" = list("font-size" ="0.7em"),
+  ".em08" = list("font-size" ="0.8em"),
+  ".em09" = list("font-size" ="0.9em"),
+  ".em11" = list("font-size" ="1.1em"),
+  ".em12" = list("font-size" ="1.2em"),
+  ".em13" = list("font-size" ="1.3em"),
+  ".em14" = list("font-size" ="1.4em"),
+  ".em15" = list("font-size" ="1.5em"),
+  ".em16" = list("font-size" ="1.6em"),
+  ".em17" = list("font-size" ="1.7em"),
+  ".em18" = list("font-size" ="1.8em"),
+  ".em19" = list("font-size" ="1.9em"),
+  ".bold" = list("font-weight" = "bold"),
+  ".large" = list("font-size" = "160%"),
+  ".vertmiddle" = list("vertical-align" ="middle"),
+  #".lh15" = list("line-height" =  "1.5"),
+  ".li" = list("line-height" =  "1.5",
+               "font-size" = "160%",
+               "font-weight" = "bold"),
+  ".phgreen" = list("color" = "#50B32E"),
+  ".phgreenlight" = list("color" = "#62DC3A"),
+  ".pgl" = list("color" = "#62DC3A"),
+ # ".my-footer" = list("background-color" = "#1a1917",
+ #                     "position" = "absolute",
+ #                     "bottom" = "0px",
+ #                     "left" = "0px",
+ #                     "height" = "20px",
+ #                     "width" = "100%"),
+  ".my-footer span" = list("font-size" = "10pt", 
+                           "color" = "#F7F8FA",
+                           "position" = "absolute",
+                           "left" = "15px",
+                           "bottom" = "2px"),
+  ".remark-slide-number" = list("bottom" = "-18px"),
+  ".li" = list("line-height" =  "4"),
+  ".scroll-box-18" = list("height" ="18em",
+                           "overflow-y" = "scroll"),
+  ".scroll-box-23" = list("height" ="23em",
+                           "overflow-y" = "scroll"),
+  ".hscroll-box-30" = list("width" ="23em",
+                           "overflow-x" = "scroll"))
+
+style_mono_accent(
+  background_color = "#000000",
+  background_image = "https://live.staticflickr.com/65535/50973602108_8fce3f8f28_k.jpg",
+  text_color = "#ffffff",
+  base_color           = "#ffffff",
+  header_font_google   = google_font("Roboto", "700"),
+  text_font_google     = google_font("Roboto", "500"),
+  code_font_google     = google_font("Droid Mono"),
+  extra_css = extra_css,
+  inverse_background_color = "#ffffff",
+  inverse_text_color = "#000000",
+  link_color = "#6AEE3E"
+)
+
+use_logo(
+  image_url = "https://svgur.com/i/X57.svg",#"https://live.staticflickr.com/65535/50974533397_9ac99f9a48_o.png",
+  width = "180px",
+  position = css_position(top = "1.5em", right = "1.5em")
+)
+
+use_editable(expires = 1)
+```
+
+# .white[Vorlesung: Forschungsmethoden]
+
+
+.em14[<i class="fas fa-microscope fa-5x"></i>]
+
+### .white[Synchron-Sitzung 12: Bivariate Zusammenhänge]
+
+<img style="vertical-align:middle" src="https://live.staticflickr.com/65535/51100620932_e7ccc92abd_o.png", width="70px">  &nbsp;&nbsp;&nbsp;&nbsp;
+<img style="vertical-align:middle" src="https://imagizer.imageshack.com/img922/8876/bipedm.png", width="70px">
+
+.em14[.white[&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;André Epp | Samuel Merk]]  
+
+
+---
+# Überblick
+.em15[
+* Überblick
+* (Softwarebasierte) Wdh.:
+    * Kendall's $\tau$
+    * Pearson's $r$
+* Fragen zu Aufgaben und Video
+* Vertiefend elaborierende Übungsaufgaben
+]
+
+
+---
+## Den <i class="fas fa-tree"></i><i class="fas fa-tree"></i><i class="fas fa-tree"></i> trotz lauter <i class="fas fa-tree"></i> sehen
+<iframe style="width:1000px;height:450px;border: 1px
+solid black" src="https://app.wisemapping.com/c/maps/1210585/embed?zoom=1"> </iframe>
+
+---
+## Strukturlegearbeit: Metaphern
+<embed src="Cheat_Sheet_Metaphern_Musterloesung.pdf" width="1000" height="475" type="application/pdf">
+
+---
+class: middle, center 
+# Softwarebasierte Wiederholung
+
+
+---
+# Heutiger kurzer Fragebogen
+ Bitte Link auf moodle klicken ...
+ 
+ 
+ Zur Erinnerung nochmals die Incentives:
+ 
+* 1 mal = 1€, 2 mal = 2€, 3 mal = 3€, 4 mal = 4€, 5 mal = 5€, 6 mal = 6€
+* Auslosung 3*50€ unter denen die ≥ 5
+* Wahlweise Gutschein, Cash oder Spende    
+
+---
+# Ihre Fragen <i class="far fa-question-circle"></i>
+.em13[Stellen Sie Ihre Fragen zu Video/Aufgaben unter http://bit.ly/merk006 und voten Sie die Fragen Ihrer Kommiliton*innen.]
+
+&nbsp;<br>
+
+```{r, out.width="30%", fig.align='center', echo = F, message = F}
+library(qrencoder)
+par(mar=c(0,0,0,0))
+image(qrencode_raster("http://bit.ly/merk006"), 
+      asp=1, col=c("#000000", "#62DC3A"), axes=FALSE, 
+      xlab="", ylab="", bg = 'transparent')
+```
+
+
+---
+class: hide_logo
+## Vertiefend elaborierende Übungsaufgaben
+&nbsp;<br>&nbsp;<br>
+.large[Bitte bearbeiten Sie Aufgaben unter http://bit.ly/merk006]
+
+```{r, out.width="30%", fig.align='center', echo = F, message = F}
+library(qrencoder)
+par(mar=c(0,0,0,0))
+image(qrencode_raster("http://bit.ly/merk006"), 
+      asp=1, col=c("#000000", "#62DC3A"), axes=FALSE, 
+      xlab="", ylab="", bg = 'transparent')
+```
+
+```{r, echo = F, results='hide', eval=FALSE}
+library(tidyverse)
+library(hrbrthemes)
+library(GGally)
+library(viridis)
+
+ggparcoord(
+  allbus2018 %>% 
+    mutate(Fersehdauer = lm02,
+           Nettoeinkommen = di01a) %>%
+    select(Fersehdauer, Nettoeinkommen) %>% 
+    sample_frac(.2),
+    columns = 1:2,
+    showPoints = TRUE, 
+    title = "Parallel Coordinate Plot Einkommen und Fernsehdauer",
+    alphaLines = 0.05,
+  scale = "center",
+    ) + 
+  scale_color_viridis(discrete=TRUE) +
+  theme_ipsum()+
+  theme(
+    plot.title = element_text(size=10)
+  ) + 
+  xlab("") + ylab("") +
+  theme(axis.text.y = element_blank(),
+        panel.grid.major.y =  element_blank(),
+        panel.grid.minor.y =  element_blank()) + 
+  labs(caption = "Pearson's r = -0.18, BF10 > 100")
+
+
+parcoodplot_A <- 
+ggparcoord(
+  mvtnorm::rmvnorm(n=100, mean=c(1,1), 
+                   sigma=matrix(c(1,.85,.85,1), ncol=2)) %>% 
+  as_tibble(),
+    columns = 1:2,
+    showPoints = TRUE, 
+    title = "Parallel Coordinate Plot A",
+    alphaLines = 0.05,
+  scale = "center",
+    ) + 
+  scale_color_viridis(discrete=TRUE) +
+  theme_ipsum()+
+  theme(
+    plot.title = element_text(size=10)
+  ) + 
+  xlab("") + ylab("") +
+  theme(axis.text.y = element_blank(),
+        panel.grid.major.y =  element_blank(),
+        panel.grid.minor.y =  element_blank()) 
+
+parcoodplot_B <- 
+ggparcoord(
+  mvtnorm::rmvnorm(n=100, mean=c(1,1), 
+                   sigma=matrix(c(1,0,0,1), ncol=2)) %>% 
+  as_tibble(),
+    columns = 1:2,
+    showPoints = TRUE, 
+    title = "Parallel Coordinate Plot B",
+    alphaLines = 0.05,
+  scale = "center",
+    ) + 
+  scale_color_viridis(discrete=TRUE) +
+  theme_ipsum()+
+  theme(
+    plot.title = element_text(size=10)
+  ) + 
+  xlab("") + ylab("") +
+  theme(axis.text.y = element_blank(),
+        panel.grid.major.y =  element_blank(),
+        panel.grid.minor.y =  element_blank()) 
+
+
+parcoodplot_C <- 
+ggparcoord(
+  mvtnorm::rmvnorm(n=100, mean=c(1,1), 
+                   sigma=matrix(c(1,-.7,-.7,1), ncol=2)) %>% 
+  as_tibble(),
+    columns = 1:2,
+    showPoints = TRUE, 
+    title = "Parallel Coordinate Plot C",
+    alphaLines = 0.05,
+  scale = "center",
+    ) + 
+  scale_color_viridis(discrete=TRUE) +
+  theme_ipsum()+
+  theme(
+    plot.title = element_text(size=10)
+  ) + 
+  xlab("") + ylab("") +
+  theme(axis.text.y = element_blank(),
+        panel.grid.major.y =  element_blank(),
+        panel.grid.minor.y =  element_blank()) 
+
+library(patchwork)
+parcoordplot <- parcoodplot_A + parcoodplot_B + parcoodplot_C
+ggsave("Sitzung_12/parcoordplot.svg",
+       parcoordplot,
+       width = 10,
+       height = 5)
+
+
+##  Alluvial Plot
+library(ggalluvial)
+titanic_wide <- data.frame(Titanic)
+head(titanic_wide)
+#>   Class    Sex   Age Survived Freq
+#> 1   1st   Male Child       No    0
+#> 2   2nd   Male Child       No    0
+#> 3   3rd   Male Child       No   35
+#> 4  Crew   Male Child       No    0
+#> 5   1st Female Child       No    0
+#> 6   2nd Female Child       No    0
+ggplot(data = titanic_wide,
+       aes(axis1 = Class, axis2 = Sex, axis3 = Age,
+           y = Freq)) +
+  scale_x_discrete(limits = c("Class", "Sex", "Age"), expand = c(.2, .05)) +
+  xlab("Demographic") +
+  geom_alluvium(aes(fill = Survived)) +
+  geom_stratum() +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum))) +
+  theme_minimal() +
+  ggtitle("passengers on the maiden voyage of the Titanic",
+          "stratified by demographics and survival")
+
+data_allbus_educ_pairs %>% 
+  filter(!(educ %in% c(6,7) | sceduc %in% c(6,7))) %>% 
+  mutate_all(as.numeric) %>% 
+  group_by(educ, sceduc) %>% 
+  summarize(Häufigkeit = n()) %>%
+  na.omit() %>% 
+  ungroup() %>% 
+  ggplot(.,
+         aes(axis1 = educ, axis2 = sceduc, y = Häufigkeit)) +
+  scale_x_discrete(limits = c("educ", "sceduc"), expand = c(.2, .05)) +
+  geom_alluvium() + 
+  geom_stratum() +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum))) +
+  theme_ipsum_rc()
+  
+```
+
